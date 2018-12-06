@@ -1,3 +1,5 @@
 .vscode
 
+# Generated files
 build
+.*-done
