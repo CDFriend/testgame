@@ -1,3 +1,6 @@
+CC=g++
+CPPFLAGS=-Wall
+
 CP=cp -av
 RM=rm
 MKDIR=mkdir -p
@@ -12,8 +15,20 @@ CLEANLIBS=$(addsuffix _clean, $(LIBS))
 # "Alias" library targets to their .done files
 $(foreach TARGET,$(LIBS),$(TARGET): .$(TARGET)_done)
 
-all: $(LIBS)
+all: engine
 clean: $(CLEANLIBS)
+
+INCLUDES=build/include Engine/include
+INCLUDE_OPTS=$(addprefix -I, $(INCLUDES))
+
+###############################################################################
+# engine: Core game engine
+###############################################################################
+include Engine/engine.mk
+
+ENGINE_OBJ=$(ENGINE_SOURCES:.cpp=.o)
+
+engine: $(LIBS) $(ENGINE_OBJ)
 
 ###############################################################################
 # libsdl2
@@ -30,6 +45,12 @@ LIBSDL2_SRC_DIR=ext/sdl2
 libsdl2_clean:
 	$(MAKE) -C $(LIBSDL2_SRC_DIR) clean
 	$(RM) .libsdl2-done
+
+###############################################################################
+# Misc build rules
+###############################################################################
+%.o: %.cpp
+	$(CC) -c $(CPPFLAGS) $(INCLUDE_OPTS) -o $@ $<
 
 $(BUILD_DIR): $(INCLUDE_DEST_DIR) $(LIB_DEST_DIR)
 $(INCLUDE_DEST_DIR):

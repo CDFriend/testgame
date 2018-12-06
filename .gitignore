@@ -3,3 +3,4 @@
 # Generated files
 build
 .*_done
+*.o
